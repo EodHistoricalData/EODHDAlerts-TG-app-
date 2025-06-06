@@ -25,29 +25,38 @@ def start(update: Update, context: CallbackContext) -> None:
 
 def set_symbol(update: Update, context: CallbackContext) -> None:
     global symbol
+
+    msg = update.effective_message
+
     if context.args:
         symbol = context.args[0].upper()
-        update.message.reply_text(f"Symbol set to {symbol}")
+        msg.reply_text(f"Symbol set to {symbol}")
     else:
-        update.message.reply_text("Please provide a symbol.")
+        msg.reply_text("Please provide a symbol.")
 
 
 def set_interval(update: Update, context: CallbackContext) -> None:
     global interval
+
+    msg = update.effective_message
+
     if context.args:
         interval = context.args[0]
-        update.message.reply_text(f"Interval set to {interval}")
+        msg.reply_text(f"Interval set to {interval}")
     else:
-        update.message.reply_text("Please provide an interval.")
+        msg.reply_text("Please provide an interval.")
 
 
 def get_price(update: Update, context: CallbackContext) -> None:
     fetcher = DataFetcher(symbol, interval)
     price = fetcher.fetch_price()
+
+    msg = update.effective_message
+
     if price is not None:
-        update.message.reply_text(f"Current price of {symbol}: {price}")
+        msg.reply_text(f"Current price of {symbol}: {price}")
     else:
-        update.message.reply_text("Failed to fetch data.")
+        msg.reply_text("Failed to fetch data.")
 
 
 def list_strategies(update: Update, context: CallbackContext) -> None:
