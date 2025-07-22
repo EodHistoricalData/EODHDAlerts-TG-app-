@@ -35,7 +35,7 @@
 
     /start: Welcome message.
 
-    /set_symbol BTC-USD: Change the trading symbol.
+    /set_symbol BTC-USD.CC: Change the trading symbol.
 
     /set_interval 1h: Change the data interval.
 
