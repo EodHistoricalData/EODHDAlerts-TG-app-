@@ -44,7 +44,7 @@ class DataFetcher:
         return df
 
     def fetch_price(self) -> float:
-        data = self.api.get_live_stock_prices(ticker="AAPL.US")
+        data = self.api.get_live_stock_prices(ticker=self.symbol)
         if len(data) == 0 or "close" not in data:
             return None
         return data["close"]
