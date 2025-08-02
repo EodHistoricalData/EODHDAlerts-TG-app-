@@ -1,10 +1,18 @@
 # bot.py
 
 import logging
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, JobQueue
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+)
 from config import TELEGRAM_BOT_TOKEN
 from handlers import (
+    backtest,
     start,
+    interval_to_seconds,
+    interval,
     set_symbol,
     set_interval,
     get_price,
@@ -13,44 +21,45 @@ from handlers import (
     strategy_button,
     current_strategy,
     analyse_market,
+    toggle_debug,
 )
 
-
-# Set up root logger so you can see INFO/debug from handlers
+# Set up root logger
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
 
 
+# Called once on bot startup
+async def on_startup(app):
+    logging.info("Bot Started: Type /start in Telegram trading bot channel.")
+
+    seconds = interval_to_seconds(interval)
+    app.job_queue.run_repeating(analyse_market, interval=seconds, first=0)
+
+
 def main() -> None:
-    """Bootstrap the Telegram bot, register command handlers and schedule market analysis."""
-    updater = Updater(TELEGRAM_BOT_TOKEN)
-    dp = updater.dispatcher
-    jq: JobQueue = updater.job_queue
+    application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # Register all command handlers
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("set_symbol", set_symbol))
-    dp.add_handler(CommandHandler("set_interval", set_interval))
-    dp.add_handler(CommandHandler("get_price", get_price))
-    dp.add_handler(CommandHandler("list_strategies", list_strategies))
-    dp.add_handler(CommandHandler("set_strategy", set_strategy))
-    dp.add_handler(CommandHandler("current_strategy", current_strategy))
+    # Register command handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("set_symbol", set_symbol))
+    application.add_handler(CommandHandler("set_interval", set_interval))
+    application.add_handler(CommandHandler("get_price", get_price))
+    application.add_handler(CommandHandler("list_strategies", list_strategies))
+    application.add_handler(CommandHandler("set_strategy", set_strategy))
+    application.add_handler(CommandHandler("current_strategy", current_strategy))
+    application.add_handler(CommandHandler("backtest", backtest))
+    application.add_handler(CommandHandler("debug", toggle_debug))
 
-    dp.add_handler(
+    application.add_handler(
         CallbackQueryHandler(strategy_button, pattern=r"^setstrat:")
     )
 
-    start_msg = "Bot Started: Type /start in Telegram trading bot channel."
-    logging.info(start_msg)
-    print(start_msg)
-
-    # Schedule the market analysis job
-    jq.run_repeating(analyse_market, interval=60, first=0)
-
-    updater.start_polling()
-    updater.idle()
+    # Hook for startup logic (e.g. scheduling)
+    application.post_init = on_startup
+    application.run_polling()
 
 
 if __name__ == "__main__":
