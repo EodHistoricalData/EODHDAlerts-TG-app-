@@ -1,0 +1,11 @@
+name: eodhd-tg-bot-dev
+services:
+  bot:
+    build: .
+    container_name: eodhd_tg_bot_dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    command: ["python", "bot.py"]

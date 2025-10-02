@@ -1,0 +1,40 @@
+image: atlassian/default-image:4
+
+pipelines:
+ custom:
+  deploy:
+   - step:
+      name: Build
+      services:
+       - docker
+      caches:
+       - docker
+      script:
+       - export DOCKER_BUILDKIT=0
+       - docker login registry.digitalocean.com -u $DOCKER_USER -p $DOCKER_PASSWORD
+       - docker build -t registry.digitalocean.com/vault33/eodhd-tg-bot:latest .
+       - docker push registry.digitalocean.com/vault33/eodhd-tg-bot:latest
+   - step:
+      name: Deploy
+      clone:
+       enabled: false
+      artifacts:
+       download: false
+      script:
+       - pipe: atlassian/ssh-run:0.8.1
+         variables:
+          SSH_USER: $SSH_USER
+          SERVER: $SSH_HOST
+          MODE: command
+          COMMAND: >
+           cd /home/ubuntu/apps/eodhd-tg-bot/ &&
+           docker login registry.digitalocean.com -u $DOCKER_USER -p $DOCKER_PASSWORD &&
+           docker pull registry.digitalocean.com/vault33/eodhd-tg-bot:latest &&
+           docker run --rm registry.digitalocean.com/vault33/eodhd-tg-bot:latest cat docker-compose.yml > docker-compose.yml &&
+           USER_ID=33 GROUP_ID=33 docker compose up --force-recreate --remove-orphans --no-start &&
+           USER_ID=33 GROUP_ID=33 docker compose up -d bot
+
+definitions:
+ services:
+  docker:
+   memory: 2048
