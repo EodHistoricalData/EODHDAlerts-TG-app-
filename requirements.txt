@@ -1,7 +1,10 @@
-python-telegram-bot==13.15
+python-telegram-bot==20.7
+apscheduler==3.10.4
+pytz
 yfinance
 numpy==1.26.3
 pandas
-pandas_ta
+ta==0.10.2
 requests
 eodhd
+aiohttp>=3.9

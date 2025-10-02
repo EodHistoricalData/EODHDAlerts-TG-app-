@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 import pandas as pd
-import pandas_ta as ta
+import ta
 
 
 class Strategy(ABC):
