@@ -1,0 +1,9 @@
+name: eodhd-tg-bot
+services:
+ bot:
+  image: registry.digitalocean.com/vault33/eodhd-tg-bot:latest
+  container_name: eodhd_tg_bot
+  restart: unless-stopped
+  env_file:
+   - .env
+  command: ["python", "bot.py"]

@@ -1,0 +1,10 @@
+import os
+
+EODHD_API_TOKEN = os.getenv("EODHD_API_TOKEN", "")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
+DEFAULT_SYMBOL = os.getenv("DEFAULT_SYMBOL", "AAPL.US")
+DEFAULT_INTERVAL = os.getenv("DEFAULT_INTERVAL", "d")
+SHORT_WINDOW = int(os.getenv("SHORT_WINDOW", 20))
+LONG_WINDOW = int(os.getenv("LONG_WINDOW", 50))

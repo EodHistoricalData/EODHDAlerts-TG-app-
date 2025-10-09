@@ -4,5 +4,7 @@ pytz
 yfinance
 numpy==1.26.3
 pandas
-pandas_ta
+ta==0.10.2
 requests
+eodhd
+aiohttp>=3.9
