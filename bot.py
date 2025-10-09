@@ -1,5 +1,3 @@
-# bot.py
-
 import logging
 from telegram.ext import (
     ApplicationBuilder,

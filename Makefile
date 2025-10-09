@@ -6,11 +6,10 @@ UID := $(shell id -u)
 GID := $(shell id -g)
 
 build:
-	docker build -t $(IMAGE):$(TAG) .
+	docker build -t $(REPO)/$(IMAGE):latest .
 	docker image prune --force --filter=label=$(IMAGE) || true
 
 docker:
-	docker tag $(IMAGE):$(TAG) $(REPO)/$(IMAGE):latest
 	docker push $(REPO)/$(IMAGE):latest
 
 push-sha:
