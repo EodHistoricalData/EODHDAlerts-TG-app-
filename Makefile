@@ -6,7 +6,7 @@ UID := $(shell id -u)
 GID := $(shell id -g)
 
 build:
-	docker build -t $(REPO)/$(IMAGE):latest .
+	docker build --platform="linux/amd64" -t $(REPO)/$(IMAGE):latest .
 	docker image prune --force --filter=label=$(IMAGE) || true
 
 docker:
